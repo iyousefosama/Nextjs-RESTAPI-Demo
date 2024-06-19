@@ -61,14 +61,14 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "💢 Invalid user ID" }, { status: 400 });
     }
 
-    const user = await Users.findOneAndUpdate(
+    await Users.findOneAndUpdate(
       { _id: new ObjectId(userId) },
       { username: newUsername },
       { new: true }
     );
 
     return NextResponse.json(
-      { message: "✅ Successfuly updated user" },
+      { message: "✅ Successfully updated user" },
       { status: 200 }
     );
   } catch (error: any) {
@@ -103,7 +103,7 @@ export async function DELETE(request: Request) {
     }
 
     return NextResponse.json(
-      { message: "✅ Successfuly deleted user", user: user },
+      { message: "✅ Successfully deleted user", user: user },
       { status: 200 }
     );
   } catch (error: any) {
