@@ -11,9 +11,12 @@ export async function GET() {
 
     return NextResponse.json(users, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ error: "Error while fetching users: " + error.message}, {
-      status: 500,
-    });
+    return NextResponse.json(
+      { error: "💢 Error while fetching users: " + error.message },
+      {
+        status: 500,
+      }
+    );
   }
 }
 
@@ -23,16 +26,20 @@ export async function POST(request: Request) {
     await connect();
     const newUser = await new Users(body).save();
 
-    return NextResponse.json({
+    return NextResponse.json(
+      {
         user: newUser,
         message: "✅ User created successfully",
       },
       { status: 200 }
     );
   } catch (error: any) {
-    return NextResponse.json({ error: "Error while creating user: " + error.message}, {
-      status: 500,
-    });
+    return NextResponse.json(
+      { error: "💢 Error while creating user: " + error.message },
+      {
+        status: 500,
+      }
+    );
   }
 }
 
@@ -45,13 +52,13 @@ export async function PATCH(request: Request) {
 
     if (!userId || !newUsername) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "💢 Missing required fields" },
         { status: 400 }
       );
     }
 
     if (!ObjectId.isValid(userId)) {
-      return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
+      return NextResponse.json({ error: "💢 Invalid user ID" }, { status: 400 });
     }
 
     const user = await Users.findOneAndUpdate(
@@ -66,7 +73,42 @@ export async function PATCH(request: Request) {
     );
   } catch (error: any) {
     return NextResponse.json(
-      { error: "❌ Error while updating user: " + error.message },
+      { error: "💢 Error while updating user: " + error.message },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "💢 userId is required!" },
+        { status: 400 }
+      );
+    }
+
+    if (!ObjectId.isValid(userId)) {
+      return NextResponse.json({ error: "💢 Invalid user ID" }, { status: 400 });
+    }
+
+    await connect();
+
+    const user = await Users.findOneAndDelete({ _id: new ObjectId(userId) });
+    if (!user) {
+      return NextResponse.json({ error: "💢 User not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(
+      { message: "✅ Successfuly deleted user", user: user },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: "💢 Error while deleting user: " + error.message },
       { status: 500 }
     );
   }
