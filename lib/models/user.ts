@@ -1,7 +1,7 @@
 import { Schema, model, models } from "mongoose";
 
 const userSchema = new Schema({
-    emai: {
+    email: {
         type: String,
         required: true,
         unique: true
